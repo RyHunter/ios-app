@@ -10,12 +10,10 @@ def getDataFromPost(post):
         "created_time": post['created_time']
     }
 
-
 def insertPostData(companyId, message, likesCount, commentsCount, createdTime, cursor):
-    insertQuery = ("INSERT INTO posts_dummy (company_id, content, likes_count, comments_count, created_time) VALUES (%s, %s, %s, %s, %s)")
+    insertQuery = ("INSERT INTO posts (company_id, content, likes_count, comments_count, created_time) VALUES (%s, %s, %s, %s, %s)")
     postData = (companyId, message, likesCount, commentsCount, createdTime)
     cursor.execute(insertQuery, postData)
-
 
 def getCompanyIdByHandle(handle, cursor):
     selectQuery = ("SELECT id FROM companies WHERE twitter_handle=%s")
@@ -28,7 +26,6 @@ def getHandleByCompanyId(id, cursor):
     return cursor.fetchone()[0]
 
 def getAllCompanies(cursor, twitterHandleIsUrl):
-
     twitterClause = ''
     if twitterHandleIsUrl:
         twitterClause = " WHERE twitter_handle_is_facebook_url"
@@ -70,7 +67,7 @@ for company in companiesArray:
 
         response = requests.get(nextRequest)
         jsonResponse = response.json()
-        # print(jsonResponse)
+        print(jsonResponse)
         # exit()
         postsArray = jsonResponse['data']
 
@@ -84,12 +81,15 @@ for company in companiesArray:
                 likesRequest = "https://graph.facebook.com/v3.3/{}/likes?summary=total_count&access_token={}".format(postId, accessToken)
                 response = requests.get(likesRequest)
                 likesResponse = response.json()
+                print(likesResponse)
+                # exit()
                 likesCount = likesResponse['summary']['total_count'];
                 
                 # Get comments count for given post
                 commentsRequest = "https://graph.facebook.com/v3.3/{}/comments?summary=total_count&access_token={}".format(postId, accessToken)
                 response = requests.get(commentsRequest)
                 commentsResponse = response.json()
+                print(commentsResponse)
                 commentsCount = commentsResponse['summary']['total_count'];
 
                 insertPostData(company['id'], postData['message'], likesCount, commentsCount, postData['created_time'], insertCursor)
