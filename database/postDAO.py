@@ -34,7 +34,7 @@ def getPostsByCompanyId(companyId, cursor):
     selectQuery = ("SELECT id, company_id, source, content, likes_count, comments_count, retweets_count, created_time FROM posts WHERE company_id=%s")
     cursor.execute(selectQuery, (companyId,))
     postsArray = []
-    for result in cursor:
+    for post in cursor:
         postsArray.append({
             "id": post[0],
             "company_id": post[1],
@@ -47,7 +47,7 @@ def getPostsByCompanyId(companyId, cursor):
         })
     return postsArray
 
-def insertPost(companyId, message, likesCount, commentsCount, retweetsCount, createdTime, cursor):
-    insertQuery = ("INSERT INTO posts (company_id, content, likes_count, comments_count, retweets_count, created_time) VALUES (%s, %s, %s, %s, %s)")
-    postData = (companyId, message, likesCount, commentsCount, retweetsCount, createdTime)
+def insertPost(companyId, source, message, likesCount, commentsCount, retweetsCount, createdTime, cursor):
+    insertQuery = ("INSERT INTO posts (company_id, source, content, likes_count, comments_count, retweets_count, created_time) VALUES (%s, %s, %s, %s, %s)")
+    postData = (companyId, source, message, likesCount, commentsCount, retweetsCount, createdTime)
     cursor.execute(insertQuery, postData)
