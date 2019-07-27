@@ -9,7 +9,7 @@ db = mysql.connector.connect(user=config.DATABASE['user'],
                               database=config.DATABASE['database'])
 cursor = db.cursor()
 
-insertQuery = ("INSERT INTO comp (url, name, twitter_handle) VALUES (%s, %s, %s)")
+insertQuery = ("INSERT INTO companies (url, name, twitter_handle) VALUES (%s, %s, %s)")
 
 file = open('Fortune-1000-Company-Twitter-Accounts.csv')
 

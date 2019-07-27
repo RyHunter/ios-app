@@ -51,3 +51,8 @@ def insertPost(companyId, source, message, likesCount, commentsCount, retweetsCo
     insertQuery = ("INSERT INTO posts (company_id, source, content, likes_count, comments_count, retweets_count, created_time) VALUES (%s, %s, %s, %s, %s)")
     postData = (companyId, source, message, likesCount, commentsCount, retweetsCount, createdTime)
     cursor.execute(insertQuery, postData)
+
+def insertPostVisualization(postId, html, cursor):
+    insertQuery = ("INSERT INTO post_visualization_html (post_id, html) VALUES (%s, %s)")
+    postVisualizationData = (postId, html)
+    cursor.execute(insertQuery, postVisualizationData)
