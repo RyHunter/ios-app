@@ -20,7 +20,7 @@ def connect(username, password):
 		db = mysql.connector.connect(user=username, 
 								  password=password,
 								  host='',
-								  port=,
+								  port= ,
 								  database='')
 								  							
 		return db
@@ -30,12 +30,10 @@ def connect(username, password):
 #insert tweets into db    	
 def insertPost(companyId, source, message, likesCount, commentsCount, retweetsCount, createdTime):
 	try:
-		insertQuery = ("INSERT INTO posts (company_id, source, content, likes_count, comments_count, retweets_count, created_time) VALUES (%s, %s, %s, %s, %s, %s, %s)")
+		insertQuery = ("INSERT INTO twitter_posts (company_id, source, content, likes_count, comments_count, retweets_count, created_time) VALUES (%s, %s, %s, %s, %s, %s, %s)")
 		postData = (companyId, source, message, likesCount, commentsCount, retweetsCount, createdTime)
-		print(postData)
 		db.cursor().execute(insertQuery, postData)
 		db.commit()
-		print("inserted row")
 	except Exception as ex:
 		print(ex)
         	
@@ -51,21 +49,25 @@ def get_tweets(user):
 		source = 'Twitter'
 		
 		#set tweet count
-		number_of_tweets = 5
+		number_of_tweets = 5000
+		count = 0
 		#get tweets
 		for tweet in tweepy.Cursor(api.user_timeline, screen_name = username, include_rts = False, tweet_mode="extended").items(number_of_tweets):
 		#array of tweet info
 			if tweet.in_reply_to_status_id is None:
 				ts = time.strftime('%Y-%m-%d %H:%M:%S', time.strptime(str(tweet.created_at),'%Y-%m-%d %H:%M:%S'))
 				insertPost(userId, source, tweet.full_text.encode("utf-8"), tweet.favorite_count, 0, tweet.retweet_count, ts)
+				count += 1	
 			else:
-				print("@tweet excluded")
-
+				print("@tweet")	
+		print(str(count) + " tweets added for " + str(username))		
 	except Exception as ex:
 		print(ex)
 			
 def selectUsers(cursor):
 	try: 
+		users = []
+		data = []
 		selectQuery = ("SELECT DISTINCT twitter_handle, id FROM companies")
 		cur = cursor.execute(selectQuery)
 		users = list(cursor.fetchall())
@@ -75,13 +77,9 @@ def selectUsers(cursor):
 				   	
 if __name__ == '__main__':
 	try:
-		db = connect('', '')
+		db = connect('username', 'password')
 		users = selectUsers(db.cursor())
-		get_tweets(users[1])
-		#for user in users:
-			#get_tweets(user)
+		for user in users:
+			get_tweets(user)
 	except Exception as ex: 
 		print(ex)
-		
-		
-		
