@@ -16,11 +16,12 @@ nlp = spacy.load("en_core_web_sm")
 
 companiesArray = companyDAO.getCompanies(selectCursor)
 for company in companiesArray:
-    posts = postDAO.getPostsByCompanyId(company['id'], selectCursor)
-    for post in posts:
-        doc = nlp(post['content'])
-        html = displacy.render(doc, style="dep")
-        postDAO.insertPostVisualization(post['id'], html, insertCursor)
+    if company['id'] > 1:
+        posts = postDAO.getPostsByCompanyId(company['id'], selectCursor)
+        for post in posts:
+            doc = nlp(post['content'])
+            html = displacy.render(doc, style="dep")
+            postDAO.insertPostVisualization(post['id'], html, insertCursor)
         # for token in doc:
         #     tokenDAO.insertToken(post['id'], token.text, token.lemma_, token.pos_, insertCursor)
     
@@ -28,8 +29,7 @@ for company in companiesArray:
 
     dbInsert.commit()
     dbSelect.commit()
-    insertCursor.close()
-    selectCursor.close()
-    dbInsert.close()
-    dbSelect.close()
-    exit()
+insertCursor.close()
+selectCursor.close()
+dbInsert.close()
+dbSelect.close()
